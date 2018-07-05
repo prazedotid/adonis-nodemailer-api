@@ -15,17 +15,25 @@
 
 const Route = use('Route')
 
+Route.get('/api', () => {
+  const start = Date.now()
+  return { code: 200, status: true, time: Date.now() - start + 'ms', message: 'Welcome to Adonis-Nodemailer API!' }
+})
+
 Route
   .group(() => {
 
-    Route.get('/', () => {
-      const start = Date.now()
-      return { code: 200, status: true, time: Date.now() - start + 'ms', message: 'Welcome to Adonis-Nodemailer API!' }
-    })
+    // Route.get('/', 'EmailController.getEmails')
+    
+    Route.post('/send/:id', 'EmailController.createEmail')
 
-    Route.get('/email', 'EmailController.getEmails')
+    Route.get('/accounts', 'SenderController.getAccounts')
 
-    Route.post('/email', 'EmailController.createEmail')
+    Route.post('/accounts', 'SenderController.createAccount')
+
+    Route.put('/accounts/:id', 'SenderController.editAccount')
+
+    Route.delete('/accounts/:id', 'SenderController.deleteAccount')
 
   })
-  .prefix('/api')
+  .prefix('/api/email')

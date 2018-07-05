@@ -1,0 +1,173 @@
+{
+	"info": {
+		"name": "Service Email",
+		"_postman_id": "f4226008-6129-413e-818c-f4a4e87259a1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Sender Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"service\": \"gmail\",\n\t\"email\": \"anthonyvanb33@gmail.com\",\n\t\"password\": \"galih321\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3333/api/email/accounts",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"api",
+						"email",
+						"accounts"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Sender Account List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"service\": \"gmail\",\n\t\"email\": \"anthonyvanb33@gmail.com\",\n\t\"password\": \"galih321\"\n\t\n}"
+				},
+				"url": {
+					"raw": "localhost:3333/api/email/accounts",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"api",
+						"email",
+						"accounts"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Send Email using Sender Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"recipients\": \"edwardve33@tutanota.com\",\n\t\"subject\": \"Email from ID 2!\",\n\t\"html\": \"Sup bruh?\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3333/api/email/send/:id",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"api",
+						"email",
+						"send",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Sender Account Details",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"service\": \"gmail\",\n\t\"email\": \"wiwikcorp33@gmail.com\",\n\t\"password\": \"galih321\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3333/api/email/accounts/:id",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"api",
+						"email",
+						"accounts",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Sender Account",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:3333/api/email/accounts/:id",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"api",
+						"email",
+						"accounts",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

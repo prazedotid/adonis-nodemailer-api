@@ -1,9 +1,10 @@
 'use strict'
 
 const Database = use('Database')
+const Encryption = use('Encryption')
 const Email = use('App/Models/Email')
+const Sender = use('App/Models/Sender')
 const nodemailer = require('nodemailer')
-const he = require('he')
 
 class EmailController {
   async getEmails({ response }){
@@ -28,22 +29,31 @@ class EmailController {
     })
   }
 
-  async createEmail({ request, response }){
+  async createEmail({ request, response, params }){
     const start = Date.now()
-    const mailUser = process.env.MAIL_USER
-    const mailPassword = process.env.MAIL_PASSWORD
     const body = request.post()
 
+    const sender = await Sender.find(params.id)
+
+    if(!sender){
+      return response.notFound({
+        code: 404,
+        status: false,
+        time: Date.now() - start + 'ms',
+        message: 'The sender you are trying to use doesn\'t exist'
+      })
+    }
+
     let transporter = nodemailer.createTransport({
-      service: process.env.MAIL_SERVICE,
+      service: sender.service,
       auth: {
-        user: mailUser,
-        pass: mailPassword
+        user: sender.email,
+        pass: await Encryption.decrypt(sender.password)
       }
     })
 
     let mailOptions = {
-      from: mailUser,
+      from: sender.email,
       to: body.recipients,
       subject: body.subject,
       html: body.html
@@ -53,7 +63,7 @@ class EmailController {
       await transporter.sendMail(mailOptions)
 
       const email = new Email()
-      email.from = mailUser
+      email.from = sender.email
       email.to = body.recipients
       email.subject = body.subject
       email.html = body.html
@@ -62,25 +72,31 @@ class EmailController {
       
       await email.save()
 
-      var responseData = await Database.table('emails').select('*').where({ id: email.id }).first()
-
       return response.ok({
         code: 200,
         status: true,
         time: Date.now() - start + 'ms',
         message: email.status_message,
-        data: responseData
+        data: email
       })
 
     } catch(err) {
+      let statusMessage
+
+      if(err.code == 'EAUTH'){
+        statusMessage = 'Less secure application permission is not enabled. Please visit https://myaccount.google.com/lesssecureapps?pageId=none.'
+      } else {
+        console.log(err)
+        statusMessage = 'unexpected error'
+      }
 
       const email = new Email()
-      email.from = mailUser
+      email.from = sender.email
       email.to = body.recipients
       email.subject = body.subject
       email.html = body.html
       email.status = false
-      email.status_message = err
+      email.status_message = statusMessage
       
       await email.save()
 
@@ -89,51 +105,9 @@ class EmailController {
         status: false,
         time: Date.now() - start + 'ms',
         message: email.status_message,
-        data: responseData
+        data: email
       })
     }
-    
-
-  //   transporter.sendMail(mailOptions, async (err, info) => {
-  //     const email = new Email()
-
-  //     email.from = mailUser
-  //     email.to = body.recipients
-  //     email.subject = body.subject
-  //     email.html = body.html
-
-  //     if (err) {
-  //       email.status = false
-  //       email.status_message = 'failed'
-
-  //       console.log(err)
-  //     } else {
-  //       email.status = true
-  //       email.status_message = 'success'
-  //     }
-
-  //     try {
-  //       await email.save()
-
-  //       var responseData = await Database.table('emails').select('*').where({ id: email.id }).first()
-
-  //       return response.status(200).send({
-  //         code: 200,
-  //         status,
-  //         time: Date.now() - start + 'ms',
-  //         message: email.status_message,
-  //         data: responseData
-  //       })
-  //     } catch(exception) {
-  //       return response.send({
-  //         code: 500,
-  //         status: false,
-  //         time: Date.now() - start + 'ms',
-  //         message: exception
-  //       })
-  //     }
-      
-  //  })
   }
 }
 
